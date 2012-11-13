@@ -1,8 +1,5 @@
-
-import os.path
+import os
 import unittest
-import random
-from StringIO import StringIO
 from os import path
 from magic import Magic, MagicException
 

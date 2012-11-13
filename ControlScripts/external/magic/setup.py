@@ -1,4 +1,4 @@
-from setuptools import setup, Extension
+from setuptools import setup
 #from distutils.core import setup, Extension
 
 setup(name='python-magic',

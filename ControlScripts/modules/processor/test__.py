@@ -1,4 +1,3 @@
-from core.campaign import Campaign
 from core.processor import processor
 
 import os
