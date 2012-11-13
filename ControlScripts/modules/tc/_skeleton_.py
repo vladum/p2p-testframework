@@ -1,5 +1,5 @@
 # These imports are needed to access the Campaign data object and the tc parent class.
-from core.campaign import Campaign
+#from core.campaign import Campaign
 from core.tc import tc
 
 # You can define anything you like in the scope of your own module: the only thing that will be imported from it
