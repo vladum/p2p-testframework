@@ -1379,7 +1379,7 @@ empty
         trans = client.get_transport()
         chan2 = trans.open_session()
         chan2.set_combine_stderr( True )
-        chan2.exec_command( 'ssh {0}'.format( self.nodeSet[0] ) )
+        chan2.exec_command( 'ssh {0} -T'.format( self.nodeSet[0] ) )
         io = (chan2.makefile( 'wb', -1 ), chan2.makefile( 'rb', -1 ) )
         obj = das4ConnectionObject( client, io, "{0}/das4_sftp/sftp_fwd_{1}".format( self.getPersistentTestDir(), self.nodeSet[0] ) )
         Campaign.debuglogger.log( obj.getIdentification(), 'CREATED in scenario {2} for DAS4 host {0} to node {1}'.format( self.name, self.nodeSet[0], self.scenario.name ) )
@@ -1776,9 +1776,9 @@ empty
             for node in nodeList:
                 if self.isInCleanup():
                     return
-                res = self.sendMasterCommand( 'if ! qstat -j {1} > /dev/null 2> /dev/null; then echo "ERR"; else ssh -n -T -o BatchMode=yes {0} "echo \\"OK\\""; fi'.format( node, self.reservationID ) ) 
+                res = self.sendMasterCommand( 'if ! qstat -j {1} > /dev/null 2> /dev/null; then echo "ERR"; else ssh -n -o BatchMode=yes {0} "echo \\"OK\\""; fi'.format( node, self.reservationID ) ) 
                 if res.splitlines()[-1] != "OK":
-                    raise Exception( "Can't connect to a node of host {0}. Observed output: {1}".format( self.name, res ) )
+                    raise Exception( "Can't connect to a node ({2}) of host {0}. Observed output: {1}".format( self.name, res, node ) )
             print "Nodes on DAS4 available: {0}".format( nodes )
             Campaign.logger.log( "Nodes on DAS4 available: {0}".format( nodes ), False )
             # Divide all nodes over the master hosts
@@ -1823,7 +1823,7 @@ empty
                     del self.masterConnection
                     self.masterConnection = None
                     return
-                self.tempPersistentDirectory = self.sendMasterCommand('mktemp -d --tmpdir="`pwd`"')
+                self.tempPersistentDirectory = self.sendMasterCommand('mktemp -d -p "`pwd`"')
                 if not self.tempPersistentDirectory or self.tempPersistentDirectory == '':
                     self.tempPersistentDirectory = None
                     raise Exception( "Could not create temporary persistent directory on the headnode for host {0}".format( self.name ) )
@@ -1877,7 +1877,7 @@ empty
         if self.bogusRemoteDir:
             if self.isInCleanup():
                 return
-            self.tempDirectory = self.sendCommand( 'mkdir -p /local/{0}; mktemp -d --tmpdir=/local/{0}'.format( self.user ) )
+            self.tempDirectory = self.sendCommand( 'mkdir -p /local/{0}; mktemp -d -p /local/{0}'.format( self.user ) )
             if self.tempDirectory != '':
                 testres = self.sendCommand( '[ -d "{0}" ] && [ `ls -a "{0}" | wc -l` -eq 2 ] && echo "OK"'.format( self.tempDirectory ) )
             if self.tempDirectory == '' or testres.strip() != "OK":
